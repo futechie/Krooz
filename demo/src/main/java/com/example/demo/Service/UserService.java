@@ -9,7 +9,7 @@ import com.example.demo.repo.UserRepository;
 
 public interface UserService {
 
-	void sendMsg(String text, int sender_id, int receiver_id, int chat_id);
+	void sendMsg(String text, int sender_id, int receiver_id, int chat_id, int msg_Type);
 	
 
 	

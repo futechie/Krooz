@@ -40,8 +40,9 @@ public class RestControler {
 	public String sendMsg(@RequestParam(value="message") String text,
 			@RequestParam(value="S_id") int sender_id,
 			@RequestParam(value="R_id") int receiver_id,
-			@RequestParam(value="C_id") int chat_id){
-		userService.sendMsg(text,sender_id,receiver_id,chat_id);
+			@RequestParam(value="C_id") int chat_id,
+			@RequestParam(value="Type_id") int msg_Type){
+		userService.sendMsg(text,sender_id,receiver_id,chat_id,msg_Type);
 		return "success";
 	}
 

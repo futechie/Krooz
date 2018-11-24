@@ -36,7 +36,6 @@ public class User implements Serializable{
 	}
 	private String email;
 	private String password;
-	private String repassword;
 	
 	public int getUid() {
 		return Uid;
@@ -62,16 +61,11 @@ public class User implements Serializable{
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public String getRepassword() {
-		return repassword;
-	}
-	public void setRepassword(String repassword) {
-		this.repassword = repassword;
-	}
+	
 	@Override
 	public String toString() {
 		return "Register [id=" + Uid + ", Username=" + Username + ", email=" + email + ", password=" + password
-				+ ", repassword=" + repassword + "]";
+				+ "]";
 	}
 	
 	

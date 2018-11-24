@@ -21,6 +21,7 @@ public class MessageMaster {
 	@Column(name ="senderid")
 	public int senderId;
 
+	
 	@Column(name ="receiverid")
 	public int receiverId;
 	
@@ -29,6 +30,9 @@ public class MessageMaster {
 	
 	@Column(name ="jsonid")
 	public String jsonId;
+
+	@Column(name ="createdDate")
+	public Timestamp date;
 	
 	public String getJsonId() {
 		return jsonId;
@@ -37,9 +41,6 @@ public class MessageMaster {
 	public void setJsonId(String jsonId) {
 		this.jsonId = jsonId;
 	}
-
-	@Column(name ="createdDate")
-	public Timestamp date;
 
 	public int getChatId() {
 		return chatId;

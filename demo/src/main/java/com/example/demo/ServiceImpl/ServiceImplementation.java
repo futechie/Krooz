@@ -2,6 +2,8 @@ package com.example.demo.ServiceImpl;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +39,7 @@ public class ServiceImplementation implements UserService{
 	MessageMasterRepository messageMasterRepo;
 
 	@Override
-	public void sendMsg(String text, int sender_id, int receiver_id,int chat_id) {
+	public void sendMsg(String text, int sender_id, int receiver_id,int chat_id,int msg_Type) {
 		
 		MessageMaster mm= new MessageMaster();
 		mm.setSenderId(sender_id);
@@ -53,24 +55,7 @@ public class ServiceImplementation implements UserService{
 		
 		
 		
-			
-			
-			JsonParser parser = new JsonParser();
-			 Object obj = null;
-			try {
-				obj = parser.parse(new FileReader("D:\\Studies\\Eclipse\\oxygen workspace\\demo\\src\\main\\resources\\static\\JSON.txt"));
-			} catch (JsonIOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (JsonSyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	
-	         JsonObject jsonObject =  (JsonObject) obj;
+	         JsonObject jsonObject =  (JsonObject) readJSON();
 	         JsonArray arr=new JsonArray();
 	         
 	          arr= (JsonArray) jsonObject.get(conversationId);
@@ -81,12 +66,13 @@ public class ServiceImplementation implements UserService{
 	         for (JsonElement jsonElement : arr) {    	   jsonArray.add(jsonElement);	}
 	         JsonObject JO=new  JsonObject();
 		  		 JO.addProperty("Message", text);
-		  		 JO.addProperty("MessageType", "seperate");
+		  		 JO.addProperty("MessageType", msg_Type==1?"G":"S");
 		  		 JO.addProperty("flag", "From");
 		  		 JO.addProperty("createdTime", System.currentTimeMillis());
 	         jsonArray.add(JO);
-	         jsonObject.add("json_id", jsonArray);
-		
+	         jsonObject.add(conversationId, jsonArray);
+	         
+	         writeJSON(jsonObject.toString());
          
 		
 		
@@ -94,5 +80,48 @@ public class ServiceImplementation implements UserService{
 		userRepository.save(null);
 	}
 	
+	
+	private Object readJSON() {
+		
+		JsonParser parser = new JsonParser();
+		 Object obj = null;
+		try {
+			obj = parser.parse(new FileReader("D:\\Studies\\Eclipse\\oxygen workspace\\demo\\src\\main\\resources\\static\\JSON.txt"));
+		} catch (JsonIOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonSyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return obj;
+		
+	}
+	
+	private void writeJSON(String fileContent) {
+		FileWriter fileWriter = null;
+		try {
+			fileWriter = new FileWriter("c://samplefile2.txt");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    try {
+			fileWriter.write(fileContent);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			try {
+				fileWriter.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} 
+	}
 
 }
