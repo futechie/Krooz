@@ -12,8 +12,5 @@ import com.example.demo.model.User;
 @Repository
 public interface MessageMasterRepository extends JpaRepository<MessageMaster, Integer>{
 
-
 	
-	
-		
 }

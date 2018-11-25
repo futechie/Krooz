@@ -15,7 +15,7 @@ public class MessageMaster {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name ="id")
+	@Column(name ="chatid")
 	public int chatId;
 	
 	@Column(name ="senderid")

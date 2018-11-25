@@ -15,27 +15,29 @@ import javax.validation.constraints.NotNull;
 @Table(name = "Users")
 public class User implements Serializable{
 	
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name ="id")
 	private int Uid;
 	
-	@Column(name = "Username", nullable = false)
+	@Column(name = "username", nullable = false)
 	@NotNull(message = "Please Enter Username")
 	private String Username;
 	
-	@Column(name = "RoleId", nullable = false)
+	@Column(name = "roleid", nullable = false)
 	@NotNull(message = "Please Enter Username")
 	private String RoleId;
 	
-	public String getRoleId() {
-		return RoleId;
-	}
-	public void setRoleId(String roleId) {
-		RoleId = roleId;
-	}
+	
+	
+	@Column(name = "emailid", nullable = true)
 	private String email;
+	
+	@Column(name = "password", nullable = true)
 	private String password;
+	
+	
 	
 	public int getUid() {
 		return Uid;
@@ -55,19 +57,11 @@ public class User implements Serializable{
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	
+
 	@Override
 	public String toString() {
-		return "Register [id=" + Uid + ", Username=" + Username + ", email=" + email + ", password=" + password
-				+ "]";
+		return "User [Username=" + Username + ", RoleId=" + RoleId + ", email=" + email + "]";
 	}
-	
 	
 	
 }
