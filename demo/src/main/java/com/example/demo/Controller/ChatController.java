@@ -56,24 +56,7 @@ public class ChatController{
 		
 	}
 	
-	public static void main(String[] args) {
-		
-	
-		// TODO Auto-generated method stub
-		GroupMaster g= new GroupMaster();
-		List<User> l=new ArrayList();
-		l.add(new User());
-		l.add(new User());
-		g.setParticipants(l);
 
-		try {
-			System.out.println(new ObjectMapper().writeValueAsString(g));
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
 	
 	
 	
