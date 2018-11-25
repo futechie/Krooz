@@ -29,15 +29,11 @@ public class User implements Serializable{
 	@NotNull(message = "Please Enter Username")
 	private String RoleId;
 	
-	
-	
 	@Column(name = "emailid", nullable = true)
 	private String email;
 	
 	@Column(name = "password", nullable = true)
 	private String password;
-	
-	
 	
 	public int getUid() {
 		return Uid;
