@@ -1,21 +1,18 @@
 package com.example.demo.Service;
 
 import java.util.List;
-import java.util.Map;
-import javax.servlet.http.HttpSession;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.example.demo.model.GroupMaster;
+import com.example.demo.model.MessagingVO;
 import com.example.demo.model.User;
-import com.example.demo.repo.UserRepository;
 
 public interface UserService {
 
-	void sendMsg(String text, int sender_id, int receiver_id, int chat_id, int msg_Type);
+	String sendMsg(MessagingVO messageVo);
 
 	List<User> getParticipants();
 
 	String createGroup(GroupMaster grpmast);
 	
+	public boolean deleteChat(MessagingVO messageVo);
 }

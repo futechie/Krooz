@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.example.demo.Service.UserService;
 import com.example.demo.model.GroupMaster;
 import com.example.demo.model.MessageMaster;
+import com.example.demo.model.MessagingVO;
 import com.example.demo.model.User;
 import com.example.demo.repo.GroupMasterRepository;
 import com.example.demo.repo.MessageMasterRepository;
@@ -53,24 +54,26 @@ public class ServiceImplementation implements UserService {
 
 	
 	@Override
-	public void sendMsg(String text, int sender_id, int receiver_id, int chat_id, int msg_Type) {
-
+	public String sendMsg(MessagingVO messageVo) {
+//		String text, int sender_id, int receiver_id, int chat_id, int msg_Type
 		MessageMaster mm = new MessageMaster();
-		mm.setSenderId(sender_id);
-		mm.setReceiverId(receiver_id);
+		mm.setSenderId(messageVo.getSender_id());
+		mm.setReceiverId(messageVo.getReceiver_id());
 		String conversationId = "";
-		
+
 		
 		String grpCode="grp_";
 		String sepCode="sep_";
 		
 
 		MessageMaster result = new MessageMaster();
-		if (chat_id == 0) {
-			conversationId = String.valueOf(sender_id) + String.valueOf(receiver_id) + System.currentTimeMillis();
+		if (messageVo.getChat_id() == 0) {
+			conversationId = String.valueOf(messageVo.getSender_id()) + String.valueOf(messageVo.getReceiver_id()) + System.currentTimeMillis();
 		} else {
-			mm=messageMasterRepo.findOne(chat_id);
-			conversationId = msg_Type==1?mm.getGroupId():mm.getSeperateid();
+			mm=messageMasterRepo.findOne(messageVo.getChat_id());
+			conversationId = messageVo.getMsg_Type()==1?mm.getGroupId():mm.getSeperateid(); 
+			if( conversationId==null || conversationId.equals("null"))
+				return "MessageType is Invalid";
 			grpCode="";
 			sepCode="";
 		}
@@ -79,28 +82,29 @@ public class ServiceImplementation implements UserService {
 		JsonArray arr = new JsonArray();
 		JsonArray jsonArray = new JsonArray();
 		if(jsonObject.has(conversationId)) {			
-			arr = (JsonArray) jsonObject.get(conversationId);
-			for (JsonElement jsonElement : arr) {
-				jsonArray.add(jsonElement);
-			}
+		arr = (JsonArray) jsonObject.get(conversationId);
+		for (JsonElement jsonElement : arr) {
+			jsonArray.add(jsonElement);
+		}
 		}
 		JsonObject JO = new JsonObject();
-		JO.addProperty("Message", text);
-		JO.addProperty("MessageType", msg_Type == 1 ? "G" : "S");
+		JO.addProperty("Message", messageVo.getText());
+		JO.addProperty("MessageType", messageVo.getMsg_Type() == 1 ? "G" : "S");
 		JO.addProperty("flag", "From");
 		JO.addProperty("createdTime", System.currentTimeMillis());
 		jsonArray.add(JO);
-		
-		jsonObject.add((msg_Type==1?grpCode:sepCode)+conversationId, jsonArray);
+
+		jsonObject.add((messageVo.getMsg_Type()==1?grpCode:sepCode)+conversationId, jsonArray);
 
 		writeJSON(jsonObject.toString());
-		if(msg_Type == 1) {
+		if(messageVo.getMsg_Type() == 1) {
 			mm.setGroupId(grpCode+conversationId);
 		}else {
 			mm.setSeperateid(sepCode+conversationId);
 		}
-		
+
 		messageMasterRepo.save(mm);
+		return "success";
 	}
 
 	
@@ -183,5 +187,13 @@ public class ServiceImplementation implements UserService {
 		return "success";
 	}
 
-	
+	@Override
+	public boolean deleteChat(MessagingVO messageVo) {
+		GroupMaster grp = groupmasterRepository.findOne(Integer.parseInt(messageVo.getGroupChatId()));
+		if(null != grp) {
+		groupmasterRepository.delete(grp);
+		return true;
+		}
+		return false;
+	}
 }

@@ -3,6 +3,7 @@ package com.example.demo.Controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -12,7 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.Service.UserService;
 import com.example.demo.model.GroupMaster;
+import com.example.demo.model.MessagingVO;
 import com.example.demo.model.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 @RestController
@@ -24,13 +28,9 @@ public class ChatController{
 	
 	@RequestMapping(value="/send", method=RequestMethod.POST)
 	@ResponseBody
-	public String sendMsg(@RequestParam(value="message") String text,
-			@RequestParam(value="S_id") int sender_id,
-			@RequestParam(value="R_id") int receiver_id,
-			@RequestParam(value="C_id") int chat_id,
-			@RequestParam(value="Type_id") int msg_Type){
-		userService.sendMsg(text,sender_id,receiver_id,chat_id,msg_Type);
-		return "success";
+	public String sendMsg(@RequestBody MessagingVO messageVo){
+		
+		return userService.sendMsg(messageVo);
 	}
 
 	@RequestMapping(value="/getParticipants", method=RequestMethod.GET)
@@ -47,8 +47,22 @@ public class ChatController{
 		return userService.createGroup(grpmast);
 		
 	}
-	
-
+	@RequestMapping(value="/deleteGroup", method=RequestMethod.DELETE)
+	@ResponseBody
+	public boolean deleteGroup(@RequestParam("groupId") String groupId) {
+		MessagingVO objMessagingVO = new MessagingVO();
+		objMessagingVO.setGroupChatId(groupId);
+		return userService.deleteChat(objMessagingVO);
+	}
+public static void main(String[] args) {
+	MessagingVO messageVo = new MessagingVO();
+	try {
+		System.out.println(new ObjectMapper().writeValueAsString(messageVo));
+	} catch (JsonProcessingException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+}
 	
 	
 	
