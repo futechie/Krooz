@@ -59,22 +59,30 @@ public class ServiceImplementation implements UserService {
 		mm.setSenderId(sender_id);
 		mm.setReceiverId(receiver_id);
 		String conversationId = "";
+		
+		
+		String grpCode="grp_";
+		String sepCode="sep_";
+		
 
 		MessageMaster result = new MessageMaster();
 		if (chat_id == 0) {
 			conversationId = String.valueOf(sender_id) + String.valueOf(receiver_id) + System.currentTimeMillis();
 		} else {
-			conversationId = messageMasterRepo.getOne(chat_id).getJsonId();
+			mm=messageMasterRepo.findOne(chat_id);
+			conversationId = msg_Type==1?mm.getGroupId():mm.getSeperateid();
+			grpCode="";
+			sepCode="";
 		}
 
 		JsonObject jsonObject = (JsonObject) readJSON();
 		JsonArray arr = new JsonArray();
-
-		arr = (JsonArray) jsonObject.get(conversationId);
-
 		JsonArray jsonArray = new JsonArray();
-		for (JsonElement jsonElement : arr) {
-			jsonArray.add(jsonElement);
+		if(jsonObject.has(conversationId)) {			
+			arr = (JsonArray) jsonObject.get(conversationId);
+			for (JsonElement jsonElement : arr) {
+				jsonArray.add(jsonElement);
+			}
 		}
 		JsonObject JO = new JsonObject();
 		JO.addProperty("Message", text);
@@ -82,11 +90,16 @@ public class ServiceImplementation implements UserService {
 		JO.addProperty("flag", "From");
 		JO.addProperty("createdTime", System.currentTimeMillis());
 		jsonArray.add(JO);
-		jsonObject.add(conversationId, jsonArray);
+		
+		jsonObject.add((msg_Type==1?grpCode:sepCode)+conversationId, jsonArray);
 
 		writeJSON(jsonObject.toString());
-
-		mm.setJsonId(conversationId);
+		if(msg_Type == 1) {
+			mm.setGroupId(grpCode+conversationId);
+		}else {
+			mm.setSeperateid(sepCode+conversationId);
+		}
+		
 		messageMasterRepo.save(mm);
 	}
 
@@ -100,7 +113,7 @@ public class ServiceImplementation implements UserService {
 		Object obj = null;
 		try {
 			obj = parser.parse(new FileReader(
-					"D:\\Studies\\Eclipse\\oxygen workspace\\demo\\src\\main\\resources\\static\\JSON.txt"));
+					"D:\\Studies\\Eclipse\\oxygen workspace\\Krooz\\demo\\src\\main\\resources\\static\\JSON.json"));
 		} catch (JsonIOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -118,7 +131,7 @@ public class ServiceImplementation implements UserService {
 	private void writeJSON(String fileContent) {
 		FileWriter fileWriter = null;
 		try {
-			fileWriter = new FileWriter("c://samplefile2.txt");
+			fileWriter = new FileWriter("D:\\Studies\\Eclipse\\oxygen workspace\\Krooz\\demo\\src\\main\\resources\\static\\JSON.json");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

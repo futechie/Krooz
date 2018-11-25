@@ -1,0 +1,46 @@
+{
+	"json_id": [
+		{
+			"Message": "Hi, how are you",
+			"MessageType": "seperate",
+			"flag": "Sent",
+			"createdTime": "10:00"
+		},
+		{
+			"Message": "Yes,Fine",
+			"MessageType": "seperate",
+			"flag": "Received",
+			"createdTime": "10:01"
+		}
+	],
+	"grp_121543149502163": [
+		{
+			"Message": "hello",
+			"MessageType": "G",
+			"flag": "From",
+			"createdTime": 1543149502659
+		},
+		{
+			"Message": "hello",
+			"MessageType": "G",
+			"flag": "From",
+			"createdTime": 1543149536291
+		}
+	],
+	"grp_121543149560034": [
+		{
+			"Message": "hello",
+			"MessageType": "G",
+			"flag": "From",
+			"createdTime": 1543149561586
+		}
+	],
+	"sep_121543149587873": [
+		{
+			"Message": "hello",
+			"MessageType": "S",
+			"flag": "From",
+			"createdTime": 1543149588290
+		}
+	]
+}

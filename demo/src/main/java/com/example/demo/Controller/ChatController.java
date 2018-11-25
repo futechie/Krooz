@@ -35,10 +35,8 @@ public class ChatController{
 
 	@RequestMapping(value="/getParticipants", method=RequestMethod.GET)
 	@ResponseBody
-	public List<User> getParticipants() {
-		
-		return userService.getParticipants();
-		
+	public List<User> getParticipants() {		
+		return userService.getParticipants();		
 	}
 	
 	// input: {"grpId":0,"groupName":null,"participants":[{"uid":0},{"uid":0]}
