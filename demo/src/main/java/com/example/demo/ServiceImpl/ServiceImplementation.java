@@ -141,24 +141,31 @@ public class ServiceImplementation implements UserService {
 
 	@Override
 	public String createGroup(GroupMaster grpmast) {
-		StringBuilder st = new StringBuilder();
+		StringBuilder st = new StringBuilder();		
 		List<User> usr=new ArrayList();
+		GroupMaster grp=new GroupMaster();
+		if(grpmast.getGrpId()!=0) {
+			grp=groupmasterRepository.findOne(grpmast.getGrpId());
+			if(grp==null) 
+				return "group does not exist";
+		}
+	
 		for (User user : grpmast.participants) {
 			st.append(user.getUid());
-			user =userRepository.findById(user.getUid()).get();
+			user =userRepository.findOne(user.getUid());
+			if(user==null) {
+				return "user does not exist";
+			}
 			usr.add(user);
-			
 			
 		}
 		st.append(System.currentTimeMillis());
 		if(grpmast.getGrpId()==0) {			
 			grpmast.setGroupName("grp_"+st.toString());
-		}else {
-			grpmast=groupmasterRepository.findById(grpmast.getGrpId()).get();
-			
-		}
-		grpmast.setParticipants(usr);
-		
+		}else {			
+			grpmast=grp;
+		}		
+		grpmast.setParticipants(usr);		
 		groupmasterRepository.save(grpmast);
 		return "success";
 	}
