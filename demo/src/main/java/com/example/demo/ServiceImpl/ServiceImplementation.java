@@ -19,8 +19,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.example.demo.Service.UserService;
+import com.example.demo.model.GroupMaster;
 import com.example.demo.model.MessageMaster;
 import com.example.demo.model.User;
+import com.example.demo.repo.GroupMasterRepository;
 import com.example.demo.repo.MessageMasterRepository;
 import com.example.demo.repo.UserRepository;
 import com.google.gson.JsonArray;
@@ -35,6 +37,9 @@ public class ServiceImplementation implements UserService {
 
 	@Autowired
 	UserRepository userRepository;
+	
+	@Autowired
+	GroupMasterRepository groupmasterRepository;
 
 	@Autowired
 	MessageMasterRepository messageMasterRepo;
@@ -131,6 +136,31 @@ public class ServiceImplementation implements UserService {
 				e.printStackTrace();
 			}
 		}
+	}
+
+
+	@Override
+	public String createGroup(GroupMaster grpmast) {
+		StringBuilder st = new StringBuilder();
+		List<User> usr=new ArrayList();
+		for (User user : grpmast.participants) {
+			st.append(user.getUid());
+			user =userRepository.findById(user.getUid()).get();
+			usr.add(user);
+			
+			
+		}
+		st.append(System.currentTimeMillis());
+		if(grpmast.getGrpId()==0) {			
+			grpmast.setGroupName("grp_"+st.toString());
+		}else {
+			grpmast=groupmasterRepository.findById(grpmast.getGrpId()).get();
+			
+		}
+		grpmast.setParticipants(usr);
+		
+		groupmasterRepository.save(grpmast);
+		return "success";
 	}
 
 	
