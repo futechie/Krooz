@@ -20,8 +20,8 @@ public class GroupMaster {
 		return participants;
 	}
 
-	public void setParticipants(List<User> participants) {
-		this.participants = participants;
+	public void setParticipants(List<User> usr) {
+		this.participants = usr;
 	}
 
 	@Id
@@ -31,6 +31,18 @@ public class GroupMaster {
 	
 	@Column(name ="groupname")
 	public String groupName;
+	
+	public String getNickName() {
+		return nickName;
+	}
+
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
+	}
+
+	@Column(name ="nickname")
+	public String nickName;
+	
 	
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "groupuser_assoc", joinColumns = { @JoinColumn(name = "grpid") }, inverseJoinColumns = { @JoinColumn(name = "uid") })

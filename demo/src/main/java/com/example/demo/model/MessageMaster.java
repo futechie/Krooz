@@ -37,8 +37,18 @@ public class MessageMaster  implements Serializable{
 	
 	@Column(name ="seperateid")
 	public String seperateid;
-
 	
+	@Column(name ="isenable")
+	public int isenable;
+
+	public int getIsEnable() {
+		return isenable;
+	}
+
+
+	public void setIsEnable(int isEnable) {
+		this.isenable = isEnable;
+	}
 
 
 	public int getChatId() {

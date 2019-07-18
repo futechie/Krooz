@@ -1,22 +1,40 @@
 package com.example.demo.Controller;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.Service.UserService;
+import com.example.demo.model.Constants;
+import com.example.demo.model.FileUpload;
 import com.example.demo.model.GroupMaster;
 import com.example.demo.model.MessagingVO;
 import com.example.demo.model.User;
+import com.example.demo.model.UserDTO;
+import com.example.demo.model.chatListDTO;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 
 
 @RestController
@@ -25,15 +43,38 @@ public class ChatController{
 	
 	@Autowired
 	UserService userService;
+
 	
-	@RequestMapping(value="/send", method=RequestMethod.POST)
+	/*@RequestMapping(value="/send", method=RequestMethod.POST)
 	@ResponseBody
 	public String sendMsg(@RequestBody MessagingVO messageVo){
 		
 		return userService.sendMsg(messageVo);
 	}
+	*/
+	
+	@RequestMapping(value="/send", method=RequestMethod.POST,produces="application/json")
+	@ResponseBody
+	public Constants sendMsg(@RequestParam("files") MultipartFile[] files,@RequestParam("content") String content) throws FileNotFoundException{
+		
+		
+		MessagingVO messageVo =new MessagingVO();
+		try {
+			messageVo=new ObjectMapper().readValue(content, MessagingVO.class);
+		} catch (JsonParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return userService.sendMsg(messageVo,files);
+	}
 
-	@RequestMapping(value="/getParticipants", method=RequestMethod.GET)
+	@RequestMapping(value="/getparticipants", method=RequestMethod.GET)
 	@ResponseBody
 	public List<User> getParticipants() {		
 		return userService.getParticipants();		
@@ -43,26 +84,54 @@ public class ChatController{
 	@RequestMapping(value="/createGroup", method=RequestMethod.POST,consumes="application/json")
 	@ResponseBody
 	public String createGroup(@RequestBody GroupMaster grpmast) {
-	
 		return userService.createGroup(grpmast);
 		
 	}
+	
+	@RequestMapping(value="/getChatList", method=RequestMethod.GET)
+	@ResponseBody
+	public List<chatListDTO> getChatList() {
+		return userService.getChatList();		
+	}
+	
+
+	
 	@RequestMapping(value="/deleteGroup", method=RequestMethod.DELETE)
 	@ResponseBody
-	public boolean deleteGroup(@RequestParam("groupId") String groupId) {
-		MessagingVO objMessagingVO = new MessagingVO();
-		objMessagingVO.setGroupChatId(groupId);
-		return userService.deleteChat(objMessagingVO);
+	public Constants deleteChat(@RequestParam("chatId") int chatId) {
+		
+		return userService.deleteChat(chatId);
 	}
-public static void main(String[] args) {
-	MessagingVO messageVo = new MessagingVO();
-	try {
-		System.out.println(new ObjectMapper().writeValueAsString(messageVo));
-	} catch (JsonProcessingException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
+	
+	
+
+	
+	@RequestMapping(value="/getConversation", method=RequestMethod.POST,produces="application/json")
+	@ResponseBody
+	public String getConversation(@RequestParam("chatId") int chatId) {
+		return userService.getConversation(chatId);		
+	} 
+	
+	@RequestMapping(value="/checkOut", method=RequestMethod.POST)
+    public ResponseEntity<byte[]> downloadFile(@RequestParam("objectId")String objectId) throws IOException {
+    	FileUpload file = userService.downloadFile(objectId);
+
+        return ResponseEntity.ok()
+                             .contentLength(file.getFileContent().length)
+                             .header(HttpHeaders.CONTENT_TYPE)
+                             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + file.getName())
+                             .body(file.getFileContent());
+      }
+	
+	public static void main(String[] args) {
+		MessagingVO messageVo = new MessagingVO();
+		try {
+			System.out.println(new ObjectMapper().writeValueAsString(messageVo));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
-}
 	
 	
 	

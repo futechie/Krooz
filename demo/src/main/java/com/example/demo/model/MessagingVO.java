@@ -3,6 +3,8 @@
  */
 package com.example.demo.model;
 
+import org.springframework.web.multipart.MultipartFile;
+
 /**
  * @author krishnanrajendran
  *
@@ -15,8 +17,8 @@ public class MessagingVO {
 	private int chat_id;
 	private int msg_Type;
 	private String groupChatId;
-	private String singleChatId; 
-	
+	private String singleChatId;
+
 	public String getText() {
 		return text;
 	}
