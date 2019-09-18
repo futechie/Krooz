@@ -1,8 +1,12 @@
 package com.example.demo.Controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.demo.Constants.ScreenShare;
 import com.example.demo.Service.UserService;
 import com.example.demo.model.Constants;
 import com.example.demo.model.FileUpload;
@@ -62,13 +67,10 @@ public class ChatController{
 		try {
 			messageVo=new ObjectMapper().readValue(content, MessagingVO.class);
 		} catch (JsonParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return userService.sendMsg(messageVo,files);
@@ -122,13 +124,52 @@ public class ChatController{
                              .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + file.getName())
                              .body(file.getFileContent());
       }
+    
+    
+	@RequestMapping(value="/screenSharing", method=RequestMethod.GET)
+    public ResponseEntity<byte[]> screenSharing() throws IOException {
+    	
+    	
+    	System.out.println("Welcome to Screen Sharer");
+		System.out.println("To set up server, type server [port]");
+		System.out
+				.println("To Set up client, type client [server-addr] [port]");
+
+		new ScreenShare().interactive();
+    	// input stream
+		InputStream in = new ByteArrayInputStream("Techie Delight"
+										.getBytes(StandardCharsets.UTF_8));
+    	byte[] bytes = toByteArray(in);
+        return ResponseEntity.ok()
+                             .contentLength(bytes.length)
+                             .header(HttpHeaders.CONTENT_TYPE)
+                             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=video")
+                             .body(bytes);
+      }
 	
+    public static byte[] toByteArray(InputStream in) throws IOException {
+
+    
+
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+		byte[] buffer = new byte[1024];
+		int len;
+
+		// read bytes from the input stream and store them in buffer
+		while ((len = in.read(buffer)) != -1) {
+			// write bytes from the buffer into output stream
+			os.write(buffer, 0, len);
+		}
+
+		return os.toByteArray();
+	}
+
 	public static void main(String[] args) {
 		MessagingVO messageVo = new MessagingVO();
 		try {
 			System.out.println(new ObjectMapper().writeValueAsString(messageVo));
 		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
